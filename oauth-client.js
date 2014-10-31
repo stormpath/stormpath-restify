@@ -31,7 +31,6 @@ module.exports = {
 
     assert.object(options, 'options');
 
-
     var opts = shallowCopy(options);
     opts.agent = options.agent;
     opts.name = opts.name || 'restify';
@@ -39,6 +38,14 @@ module.exports = {
     opts.log = opts.log || bunyan.createLogger(opts.name);
 
     var client = new OauthClient(opts);
+
+    ['GET','HEAD', 'OPTIONS','DELETE'].forEach(function(verb){
+      client[verb.toLowerCase()] = client._readInterceptor.bind(client,verb);
+    });
+
+    ['POST','PUT','PATH'].forEach(function(verb){
+      client[verb.toLowerCase()] = client._writeInterceptor.bind(client,verb);
+    });
 
     return (client);
   }
@@ -62,85 +69,33 @@ OauthClient.prototype._authenticate = function _authenticate(cb){
   }
 };
 
-OauthClient.prototype.del = function del(options, callback) {
-    var opts = this._options('DELETE', options);
-
-    return (this.read(opts, callback));
-};
-
-
-OauthClient.prototype.get = function get(options, callback) {
-    var self = this;
-    self._authenticate(function(err){
-      if(err){
-        callback(err);
-      }else{
-        self.read(
-          self._options('GET', options),
-          function(err,req,res,body){
-            callback(err,body);
-          }
-        );
-      }
-    });
-};
-
-OauthClient.prototype.post = function post(options, body, callback) {
-    var self = this;
-    assert.object(body, 'body');
-    self._authenticate(function(err){
-      // console.log('_authenticate callback');
-      if(err){
-        callback(err);
-      }else{
-        var opts = self._options('POST', options);
-        console.log('opts POST',opts.headers.authorization);
-        self.write(opts, body, function(err,req,res,body){
+OauthClient.prototype._readInterceptor = function(verb,options,callback){
+  var self = this;
+  self._authenticate(function(err){
+    if(err){
+      callback(err);
+    }else{
+      self.read(
+        self._options(verb, options),
+        function(err,req,res,body){
           callback(err,body);
-        });
-      }
-    });
+        }
+      );
+    }
+  });
 };
 
-
-// OauthClient.prototype.get = function get(options, callback) {
-//     var opts = this._options('GET', options);
-
-//     return (this.read(opts, callback));
-// };
-
-
-
-// OauthClient.prototype.head = function head(options, callback) {
-//     var opts = this._options('HEAD', options);
-
-//     return (this.read(opts, callback));
-// };
-
-// OauthClient.prototype.opts = function http_options(options, callback) {
-//     var _opts = this._options('OPTIONS', options);
-
-//     return (this.read(_opts, callback));
-// };
-
-
-// OauthClient.prototype.post = function post(options, callback) {
-//     var opts = this._options('POST', options);
-
-//     return (this.request(opts, callback));
-// };
-
-
-// OauthClient.prototype.put = function put(options, callback) {
-//     var opts = this._options('PUT', options);
-
-//     return (this.request(opts, callback));
-// };
-
-
-// OauthClient.prototype.patch = function patch(options, callback) {
-//     var opts = this._options('PATCH', options);
-
-
-//     return (this.request(opts, callback));
-// };
+OauthClient.prototype._writeInterceptor = function(verb,options,body,callback){
+  var self = this;
+  assert.object(body, 'body');
+  self._authenticate(function(err){
+    if(err){
+      callback(err);
+    }else{
+      var opts = self._options(verb, options);
+      self.write(opts, body, function(err,req,res,body){
+        callback(err,body);
+      });
+    }
+  });
+};
