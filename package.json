@@ -1,0 +1,37 @@
+{
+  "name": "stormpath-restify",
+  "version": "0.0.1",
+  "main": "index.js",
+  "description": "Official Stormpath Integration for Restify",
+  "keywords": [
+    "stormpath",
+    "restify",
+    "oauth",
+    "oauth2"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/stormpath/stormpath-restify",
+  "bugs": "https://github.com/stormpath/stormpath-restify/issues",
+  "author": {
+    "name": "Stormpath, Inc.",
+    "email": "support@stormpath.com",
+    "url": "http://www.stormpath.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stormpath/stormpath-restify.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bluebird": "^2.3.10",
+    "assert-plus": "^0.1.5",
+    "restify": "^2.8.3",
+    "stormpath": "^0.6.0"
+  },
+  "devDependencies": {
+    "assert-plus": "^0.1.5",
+    "restify": "^2.8.3"
+  }
+}
