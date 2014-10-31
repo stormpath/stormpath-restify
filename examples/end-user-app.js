@@ -10,6 +10,7 @@
   var thingsApi = require('things-api');
 */
 var util = require('util');
+var prettyjson = require('prettyjson');
 var thingsApi = require('./my-api-client.js');
 // var
 
@@ -26,31 +27,30 @@ client.addThing(
     if(err){
       console.error(err);
     }else{
-      console.log(thing);
-    }
-    client.getThings(function(err,things) {
-      if(err){
-        console.error(err);
-      }else{
-        console.log('Things is now..');
-        console.log(util.format('%s',things));
+      client.getThings(function(err,things) {
+        if(err){
+          console.error(err);
+        }else{
+          console.log('Things collection has these items:');
+          console.log(prettyjson.render(things));
 
-        client.deleteThing(thing,function(err){
-          if(err){
-            console.error(err);
-          }else{
-            client.getThings(function(err,things) {
-              if(err){
-                console.error(err);
-              }else{
-                console.log('Things is now..');
-                console.log(things);
-              }
-            });
-          }
-        });
-      }
-    });
+          client.deleteThing(thing,function(err){
+            if(err){
+              console.error(err);
+            }else{
+              client.getThings(function(err,things) {
+                if(err){
+                  console.error(err);
+                }else{
+                  console.log('Things now has these items:');
+                  console.log(prettyjson.render(things));
+                }
+              });
+            }
+          });
+        }
+      });
+    }
 });
 
 

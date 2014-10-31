@@ -30,7 +30,8 @@
     "restify": "^2.8.3",
     "stormpath": "^0.6.0",
     "uuid": "^2.0.1",
-    "underscore": "^1.7.0"
+    "underscore": "^1.7.0",
+    "prettyjson": "^1.0.0"
   },
   "devDependencies": {
     "assert-plus": "^0.1.5",

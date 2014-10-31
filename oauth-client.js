@@ -47,11 +47,9 @@ module.exports = {
 OauthClient.prototype._authenticate = function _authenticate(cb){
   var self = this;
   var validToken = self._expiresAt && ((self._expiresAt - new Date().getTime())>0);
-  console.log('validToken?',validToken);
   if(validToken){
     cb();
   }else{
-    console.log(self._authClient.headers.authorization);
     self._authClient.post('/oauth/token?grant_type=client_credentials',function(err,req,res,body){
       if(err){
         cb(err);
@@ -74,15 +72,15 @@ OauthClient.prototype.del = function del(options, callback) {
 OauthClient.prototype.get = function get(options, callback) {
     var self = this;
     self._authenticate(function(err){
-      // console.log('_authenticate callback');
       if(err){
         callback(err);
       }else{
-        var opts = self._options('GET', options);
-        console.log('opts GET',opts.headers.authorization);
-        self.read(opts, function(err,req,res,body){
-          callback(err,body);
-        });
+        self.read(
+          self._options('GET', options),
+          function(err,req,res,body){
+            callback(err,body);
+          }
+        );
       }
     });
 };
