@@ -9,7 +9,7 @@
 
   var thingsApi = require('things-api');
 */
-var util = require('util');
+
 var prettyjson = require('prettyjson');
 var thingsApi = require('./my-api-client.js');
 // var
@@ -21,7 +21,7 @@ var client = thingsApi.creeateClient({
 
 client.addThing(
   {
-    myNameIs: 'on no..'
+    myNameIs: 'what?'
   },
   function(err,thing) {
     if(err){

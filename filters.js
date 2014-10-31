@@ -38,9 +38,7 @@ function createOauthFilter(_options,stormpathLib){
   });
 
   return function _authenticateApiRequest(req,res,next){
-    console.log(req.url);
     getApplication.then(function(application){
-      console.log('_authenticateApiRequest request',req.url);
       application.authenticateApiRequest({
         request:req,
         ttl: 10
@@ -58,7 +56,6 @@ function createOauthFilter(_options,stormpathLib){
               next();
             }
           });
-
         }
       });
     });

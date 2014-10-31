@@ -13,6 +13,13 @@ var server = restify.createServer({
 
 var things = {};
 
+var aThing = {
+  id: uuid(),
+  hello: 'world'
+};
+
+things[aThing.id] = aThing;
+
 function thingAsResource(thing){
   var resource = _.extend({
     href: 'http://' + host + ( port ? (':'+ port): '' ) + '/things/' + thing.id
@@ -27,10 +34,24 @@ function thingsAsCollection(){
 }
 server.use(restify.bodyParser());
 
+server.use(function logger(req,res,next) {
+  console.log(new Date(),req.method,req.url);
+  next();
+});
+
 server.post('/oauth/token',oauthFilter);
 
 server.get('/things',function(req,res){
   res.json(thingsAsCollection());
+});
+
+server.get('/things/:id',function(req,res,next){
+  var id = req.params.id;
+  if(!id || !things[id]){
+    next(new restify.errors.ResourceNotFoundError());
+  }else{
+    res.json(thingAsResource(things[id]));
+  }
 });
 
 server.post('/things',[oauthFilter,function(req,res){

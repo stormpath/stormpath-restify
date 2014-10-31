@@ -51,8 +51,8 @@ module.exports = {
         if(err){
           cb(err); // If the API errors, just pass that along
         }else{
-          // Otherwise, print something then call back
-          console.log('Deleted thing',thing);
+          // Here you could do something custom before
+          // calling back to the original callback
           cb();
         }
       });
