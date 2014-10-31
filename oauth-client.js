@@ -39,13 +39,13 @@ module.exports = {
 
     var client = new OauthClient(opts);
 
-    ['GET','HEAD', 'OPTIONS','DELETE'].forEach(function(verb){
-      client[verb.toLowerCase()] = client._readInterceptor.bind(client,verb);
-    });
-
-    ['POST','PUT','PATH'].forEach(function(verb){
-      client[verb.toLowerCase()] = client._writeInterceptor.bind(client,verb);
-    });
+    client.get = client._readInterceptor.bind(client,'GET');
+    client.head = client._readInterceptor.bind(client,'GET');
+    client.opts = client._readInterceptor.bind(client,'OPTIONS');
+    client.del = client._readInterceptor.bind(client,'DELETE');
+    client.post = client._writeInterceptor.bind(client,'POST');
+    client.put = client._writeInterceptor.bind(client,'PUT');
+    client.patch = client._writeInterceptor.bind(client,'PATCH');
 
     return (client);
   }
