@@ -19,38 +19,46 @@ var client = thingsApi.creeateClient({
   secret:'m1NFEaFFzfX/Ja5k4vhH1C9FLkFUjIqhA3mBvvI5a9E'
 });
 
-client.addThing(
-  {
-    myNameIs: 'what?'
-  },
-  function(err,thing) {
-    if(err){
+client.getCurrentUser(function(err,user) {
+  if(err){
       console.error(err);
-    }else{
-      client.getThings(function(err,things) {
+  }else{
+    console.log('Who am I?');
+    console.log(user.fullName + ' (' + user.email + ')');
+    client.addThing(
+      {
+        myNameIs: 'what?'
+      },
+      function(err,thing) {
         if(err){
           console.error(err);
         }else{
-          console.log('Things collection has these items:');
-          console.log(prettyjson.render(things));
-
-          client.deleteThing(thing,function(err){
+          client.getThings(function(err,things) {
             if(err){
               console.error(err);
             }else{
-              client.getThings(function(err,things) {
+              console.log('Things collection has these items:');
+              console.log(prettyjson.render(things));
+
+              client.deleteThing(thing,function(err){
                 if(err){
                   console.error(err);
                 }else{
-                  console.log('Things now has these items:');
-                  console.log(prettyjson.render(things));
+                  client.getThings(function(err,things) {
+                    if(err){
+                      console.error(err);
+                    }else{
+                      console.log('Things now has these items:');
+                      console.log(prettyjson.render(things));
+                    }
+                  });
                 }
               });
             }
           });
         }
-      });
-    }
+    });
+  }
 });
 
 

@@ -41,6 +41,10 @@ server.use(function logger(req,res,next) {
 
 server.post('/oauth/token',oauthFilter);
 
+server.get('/me',[oauthFilter,function(req,res){
+  res.json(req.account);
+}]);
+
 server.get('/things',function(req,res){
   res.json(thingsAsCollection());
 });

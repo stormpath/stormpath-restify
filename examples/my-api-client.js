@@ -23,6 +23,7 @@ module.exports = {
     // Here we directly bind our convenience methods
     // to the basic GET/POST handlers in the client.
 
+    client.getCurrentUser = client.get.bind(client,'/me');
     client.getThings = client.get.bind(client,'/things');
     client.addThing = client.post.bind(client,'/things');
 
