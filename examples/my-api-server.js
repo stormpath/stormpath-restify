@@ -1,6 +1,4 @@
 var restify = require('restify');
-var _ = require('underscore');
-var uuid = require('uuid');
 
 var oauthFilter = require('stormpath-restify/filters').createOauthFilter();
 
@@ -11,27 +9,12 @@ var server = restify.createServer({
   name: 'Things API Server'
 });
 
-var things = {};
+var thingDatabse = require('./things-db');
 
-var aThing = {
-  id: uuid(),
-  hello: 'world'
-};
+var db = thingDatabse({
+  baseHref: 'http://' + host + ( port ? (':'+ port): '' ) + '/things/'
+});
 
-things[aThing.id] = aThing;
-
-function thingAsResource(thing){
-  var resource = _.extend({
-    href: 'http://' + host + ( port ? (':'+ port): '' ) + '/things/' + thing.id
-  },thing);
-  delete resource.id;
-  return resource;
-}
-function thingsAsCollection(){
-  return Object.keys(things).map(function(id){
-    return thingAsResource(things[id]);
-  });
-}
 server.use(restify.bodyParser());
 
 server.use(function logger(req,res,next) {
@@ -46,32 +29,30 @@ server.get('/me',[oauthFilter,function(req,res){
 }]);
 
 server.get('/things',function(req,res){
-  res.json(thingsAsCollection());
+  res.json(db.all());
 });
 
 server.get('/things/:id',function(req,res,next){
   var id = req.params.id;
-  if(!id || !things[id]){
+  var thing = db.getThingById(id);
+  if(!thing){
     next(new restify.errors.ResourceNotFoundError());
   }else{
-    res.json(thingAsResource(things[id]));
+    res.json(thing);
   }
 });
 
 server.post('/things',[oauthFilter,function(req,res){
-  var newThing = _.extend({
-    id: uuid()
-  },req.body);
-  things[newThing.id] = newThing;
-  res.json(thingAsResource(newThing));
+  res.json(db.createThing(req.body));
 }]);
 
 server.del('/things/:id',[function(req,res,next){
   var id = req.params.id;
-  if(!id || !things[id]){
+  var thing = db.getThingById(id);
+  if(!thing){
     next(new restify.errors.ResourceNotFoundError());
   }else{
-    delete things[id];
+    db.deleteThingById(id);
     res.send(204);
   }
 }]);
