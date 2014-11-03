@@ -62,6 +62,41 @@ function createOauthFilter(_options,stormpathLib){
   };
 }
 
+function createGroupFilter(_targetGroups,errorHandler){
+  var targetGroups;
+
+  if(Array.isArray(_targetGroups)){
+    targetGroups = _targetGroups;
+  }else if(typeof _targetGroups==='string'){
+    targetGroups = [_targetGroups];
+  }else{
+    throw new Error('createGroupFilter: targetGroups must be a string or array of strings');
+  }
+
+  return function groupFilter(req,res,next){
+    req.account.getGroups(function(err,collection){
+      if(err){
+        next(err);
+      }else{
+        collection.detect(function(group,cb){
+          cb(targetGroups.indexOf(group.name) > -1);
+        },function(result){
+          if(result){
+            next();
+          }else{
+            if(typeof errorHandler==='function'){
+              errorHandler(req,res,next,err);
+            }else{
+              res.send(403);
+            }
+          }
+        });
+      }
+    });
+  };
+}
+
 module.exports = {
-  createOauthFilter: createOauthFilter
+  createOauthFilter: createOauthFilter,
+  createGroupFilter: createGroupFilter
 };

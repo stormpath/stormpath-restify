@@ -1,6 +1,7 @@
 var restify = require('restify');
 
 var oauthFilter = require('stormpath-restify/filters').createOauthFilter();
+var trustedFilter = require('stormpath-restify/filters').createGroupFilter(['trusted']);
 
 var host = process.env.HOST || '127.0.0.1';
 var port = process.env.PORT || '8080';
@@ -46,7 +47,7 @@ server.post('/things',[oauthFilter,function(req,res){
   res.json(db.createThing(req.body));
 }]);
 
-server.del('/things/:id',[function(req,res,next){
+server.del('/things/:id',[oauthFilter,trustedFilter,function(req,res,next){
   var id = req.params.id;
   var thing = db.getThingById(id);
   if(!thing){
