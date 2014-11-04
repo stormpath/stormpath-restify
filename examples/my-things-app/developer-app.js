@@ -15,8 +15,8 @@ var thingsApi = require('./my-api-client.js');
 // var
 
 var client = thingsApi.creeateClient({
-  key:'4GNW13QPNZ29ZKBJBM6TN4FC6',
-  secret:'m1NFEaFFzfX/Ja5k4vhH1C9FLkFUjIqhA3mBvvI5a9E'
+  key:'16MOTF3V99LR2C8CF1RD1GJ8C',
+  secret:'VliKhQKTPcKUj/LD92Nz34W1f37a3p9ZgGS/4ljc/3E'
 });
 
 client.getCurrentUser(function(err,user) {
@@ -60,8 +60,3 @@ client.getCurrentUser(function(err,user) {
     });
   }
 });
-
-
-
-
-// setInterval(getThings,2000);

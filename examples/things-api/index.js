@@ -10,7 +10,7 @@
 
 */
 var oauthClient = require('stormpath-restify/oauth-client');
-
+// WWW-Authenticate: Basic realm="nmrs_m7VKmomQ2YM3:"
 module.exports = {
   creeateClient: function(opts){
     opts.url = opts.url || 'http://localhost:8080';
