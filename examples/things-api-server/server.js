@@ -9,9 +9,9 @@
 var restify = require('restify');
 
 var stormpathConfig = {
-  apiKeyId: 'YOUR API KEY',
-  apiKeySecret: 'YOUR API SECRET',
-  appHref: 'YOUR APP HREF'
+  apiKeyId: 'YOUR_STORMPATH_API_KEY',
+  apiKeySecret: 'YOUR_STORMPATH_API_SECRET',
+  appHref: 'YOUR_STORMPATH_APP_HREF'
 };
 
 var stormpathFilters =

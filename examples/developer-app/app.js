@@ -8,8 +8,8 @@ var thingsApi = require('things-api');
 // var
 
 var client = thingsApi.creeateClient({
-  key: 'DEVELOPER API KEY',
-  secret: 'DEVELOPER API SECRET'
+  key: 'DEVELOPER_API_KEY',
+  secret: 'DEVELOPER_API_SECRET'
 });
 
 client.getCurrentUser(function(err,user) {
