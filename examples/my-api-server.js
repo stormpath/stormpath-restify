@@ -2,13 +2,11 @@ var restify = require('restify');
 
 var oauthFilter = require('stormpath-restify/filters').createOauthFilter();
 var trustedFilter = require('stormpath-restify/filters').createGroupFilter(['trusted']);
+var newAccountFilter = require('stormpath-restify/filters').newAccountFilter();
+var accountVerificationFilter = require('stormpath-restify/filters').accountVerificationFilter();
 
 var host = process.env.HOST || '127.0.0.1';
 var port = process.env.PORT || '8080';
-
-var server = restify.createServer({
-  name: 'Things API Server'
-});
 
 var thingDatabse = require('./things-db');
 
@@ -16,6 +14,11 @@ var db = thingDatabse({
   baseHref: 'http://' + host + ( port ? (':'+ port): '' ) + '/things/'
 });
 
+var server = restify.createServer({
+  name: 'Things API Server'
+});
+
+server.use(restify.queryParser());
 server.use(restify.bodyParser());
 
 server.use(function logger(req,res,next) {
@@ -24,6 +27,10 @@ server.use(function logger(req,res,next) {
 });
 
 server.post('/oauth/token',oauthFilter);
+
+server.post('/accounts',newAccountFilter);
+
+server.get('/verifyAccount',accountVerificationFilter);
 
 server.get('/me',[oauthFilter,function(req,res){
   res.json(req.account);
