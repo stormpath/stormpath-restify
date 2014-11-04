@@ -26,7 +26,8 @@ module.exports = function createDatabase (options) {
       return thingsAsCollection();
     },
     getThingById: function(id){
-      return thingAsResource(things[id]);
+      var thing = things[id];
+      return thing ? thingAsResource(thing) : thing;
     },
     deleteThingById: function(id){
       delete things[id];
