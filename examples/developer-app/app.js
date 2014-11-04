@@ -5,9 +5,8 @@
 
 var prettyjson = require('prettyjson');
 var thingsApi = require('things-api');
-// var
 
-var client = thingsApi.creeateClient({
+var client = thingsApi.createClient({
   key: 'DEVELOPER_API_KEY',
   secret: 'DEVELOPER_API_SECRET'
 });

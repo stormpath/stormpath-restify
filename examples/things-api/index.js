@@ -12,7 +12,7 @@
 var oauthClient = require('stormpath-restify/oauth-client');
 
 module.exports = {
-  creeateClient: function(opts){
+  createClient: function(opts){
     opts.url = opts.url || 'http://localhost:8080';
 
     // This creates an instance of the oauth client,
@@ -25,12 +25,8 @@ module.exports = {
 
     myOauthClient.getCurrentUser = myOauthClient.get.bind(myOauthClient,'/me');
     myOauthClient.getThings = myOauthClient.get.bind(myOauthClient,'/things');
-    myOauthClient.addThing = myOauthClient.post.bind(myOauthClient,'/things');
 
-    // Here we want to do some custom logic before
-    // we talk to the api
-
-    myOauthClient.addThingWithValidation = function addThingWithValidation(thing,cb){
+    myOauthClient.addThing = function addThing(thing,cb){
       if(typeof thing!=='object'){
         cb(new Error('Things must be be an object'));
       }else{

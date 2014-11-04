@@ -8,6 +8,9 @@
   },
   "author": "",
   "license": "MIT",
+  "bin" : {
+    "register" : "./register.js"
+  },
   "dependencies": {
     "stormpath-restify": "^0.0.1"
   }
