@@ -1,6 +1,6 @@
 /*
     This is an example of the code that you would put
-    in your own npm module.
+    in your client library
 
     You will want to publish this as a module on NPM
     so that your customers can use it in their own
@@ -10,7 +10,7 @@
 
 */
 var oauthClient = require('stormpath-restify/oauth-client');
-// WWW-Authenticate: Basic realm="nmrs_m7VKmomQ2YM3:"
+
 module.exports = {
   creeateClient: function(opts){
     opts.url = opts.url || 'http://localhost:8080';

@@ -1,3 +1,11 @@
+/*
+  Example Restify server that uses Stormpath for authentication,
+  via Oauth2 client-credentials workflow and JWT tokens.
+
+  It is a simple Things API which allows anonymous users
+  to read resources.  Authenticated users can create
+  resources and trusted users can delete resources.
+*/
 var restify = require('restify');
 
 var stormpathConfig = {

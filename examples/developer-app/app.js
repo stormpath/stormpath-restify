@@ -1,22 +1,15 @@
 /*
-  This is what a consumer of your API would look like,
-  this is how they would use your client (my-api-client.js)
-  to consume your API
-
-  Here were are requiring the example API client, but when you
-  publish your API you will want to create your own module for it.
-  For example, if you published your API client as `things-api`:
-
-  var thingsApi = require('things-api');
+  This shows how a developer can require your client
+  library and use it to work with your API
 */
 
 var prettyjson = require('prettyjson');
-var thingsApi = require('./my-api-client.js');
+var thingsApi = require('things-api');
 // var
 
 var client = thingsApi.creeateClient({
-  key:'16MOTF3V99LR2C8CF1RD1GJ8C',
-  secret:'VliKhQKTPcKUj/LD92Nz34W1f37a3p9ZgGS/4ljc/3E'
+  key: 'DEVELOPER API KEY',
+  secret: 'DEVELOPER API SECRET'
 });
 
 client.getCurrentUser(function(err,user) {
