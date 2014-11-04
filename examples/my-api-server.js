@@ -1,9 +1,20 @@
 var restify = require('restify');
 
-var oauthFilter = require('stormpath-restify/filters').createOauthFilter();
-var trustedFilter = require('stormpath-restify/filters').createGroupFilter(['trusted']);
-var newAccountFilter = require('stormpath-restify/filters').newAccountFilter();
-var accountVerificationFilter = require('stormpath-restify/filters').accountVerificationFilter();
+var stormpathConfig = {
+  apiKeyId: 'YOUR API KEY',
+  apiKeySecret: 'YOUR API SECRET',
+  appHref: 'YOUR APP HREF'
+};
+
+var stormpathFilters =
+  require('stormpath-restify').createFilterSet(stormpathConfig);
+
+var oauthFilter = stormpathFilters.createOauthFilter();
+var trustedFilter = stormpathFilters.createGroupFilter({
+  inGroup: 'trusted'
+});
+var newAccountFilter = stormpathFilters.newAccountFilter();
+var accountVerificationFilter = stormpathFilters.accountVerificationFilter();
 
 var host = process.env.HOST || '127.0.0.1';
 var port = process.env.PORT || '8080';

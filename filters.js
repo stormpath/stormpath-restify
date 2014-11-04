@@ -1,56 +1,36 @@
 var Promise = require("bluebird");
 var pkg = require('./package.json');
+var _ = require('underscore');
 
 
-function createOauthFilter(_options,stormpathLib){
-  var opts = typeof _options === 'object' ? _options : {};
+function handleError(handler,err,req,res,next){
   var self = this;
-  var stormpath = stormpathLib || require('stormpath');
-  var apiKeyId = opts.apiKeyId || process.env['STORMPATH_API_KEY_ID'] || "";
-  var apiKeySecret = opts.apiKeySecret || process.env['STORMPATH_API_KEY_SECRET'] || "";
-  var appHref = opts.appHref || process.env['STORMPATH_APP_HREF'] || "";
-
-  if(opts.spClient){
-    self.spClient = opts.spClient;
-  }else{
-    self.spClient = new stormpath.Client({
-      apiKey: new stormpath.ApiKey(apiKeyId,apiKeySecret),
-      userAgent: 'restify-stormpath/' + pkg.version + ' ' + 'restify/' + require('restify/package').version,
-    });
+  if(typeof self.errorHandler==='function'){
+    self.errorHandler(err,req,res,next);
   }
-  console.log('Initializing Stormpath');
-  var getApplication = new Promise(function(resolve,reject){
-    self.spClient.getApplication(appHref,
-      function(err,app){
-        if(err){
-          reject(err);
-        }else{
-          resolve(app);
-        }
-      }
-    );
-  });
-  getApplication.then(function(app){
-    console.log('Using Stormpath application \'' + app.name + '\'');
-  });
-  getApplication.catch(function(err){
-    throw err;
-  });
+  else if(typeof handler==='function'){
+    handler(err,req,res,next);
+  }else{
+    next(err);
+  }
+}
 
+function createOauthFilter(_options){
+  var self = this;
+  var opts = typeof _options === 'object' ? _options : {};
   return function _authenticateApiRequest(req,res,next){
-    getApplication.then(function(application){
-      application.authenticateApiRequest({
-        request:req,
-        ttl: 10
-      },function(err,authResult){
+    self.getApplication.then(function(application){
+      application.authenticateApiRequest(_.extend({
+        request:req
+      },opts),function(err,authResult){
         if(err){
-          next(err);
+          self.handleError(opts.errorHandler,err,req,res,next);
         }else if(authResult.tokenResponse){
           res.send(authResult.tokenResponse);
         }else{
           authResult.getAccount(function(err,account){
             if(err){
-              next(err);
+              self.handleError(opts.errorHandler,err,req,res,next);
             }else{
               req.account = account;
               next();
@@ -62,117 +42,38 @@ function createOauthFilter(_options,stormpathLib){
   };
 }
 
-function newAccountFilter(_options,stormpathLib){
-  var opts = typeof _options === 'object' ? _options : {};
+function newAccountFilter(_options){
   var self = this;
-  var stormpath = stormpathLib || require('stormpath');
-  var apiKeyId = opts.apiKeyId || process.env['STORMPATH_API_KEY_ID'] || "";
-  var apiKeySecret = opts.apiKeySecret || process.env['STORMPATH_API_KEY_SECRET'] || "";
-  var appHref = opts.appHref || process.env['STORMPATH_APP_HREF'] || "";
-  var errorHandler = opts.errorHandler;
-
-  if(opts.spClient){
-    self.spClient = opts.spClient;
-  }else{
-    self.spClient = new stormpath.Client({
-      apiKey: new stormpath.ApiKey(apiKeyId,apiKeySecret),
-      userAgent: 'restify-stormpath/' + pkg.version + ' ' + 'restify/' + require('restify/package').version,
-    });
-  }
-  console.log('Initializing Stormpath');
-  var getApplication = new Promise(function(resolve,reject){
-    self.spClient.getApplication(appHref,
-      function(err,app){
-        if(err){
-          reject(err);
-        }else{
-          resolve(app);
-        }
-      }
-    );
-  });
-  getApplication.then(function(app){
-    console.log('Using Stormpath application \'' + app.name + '\'');
-  });
-  getApplication.catch(function(err){
-    throw err;
-  });
-
-  function handleError(err,req,res,next){
-    console.log('handleError',err);
-    if(typeof errorHandler==='function'){
-      errorHandler(err,req,res,next);
-    }else{
-      res.json(err.status,err);
-    }
-  }
+  var opts = typeof _options === 'object' ? _options : {};
 
   return function _handleAccountCreationRequest(req,res,next){
-
-    getApplication.then(function(application){
-
+    self.getApplication.then(function(application){
       application.createAccount(req.body,function(err){
         if(err){
-          handleError(err,req,res,next);
+          self.handleError(opts.errorHandler,err,req,res,next);
         }else{
           res.json(201,{message:'Please check your email for verification'});
         }
       });
     });
-
   };
 }
 
-function accountVerificationFilter(_options,stormpathLib){
-  var opts = typeof _options === 'object' ? _options : {};
+
+function accountVerificationFilter(_options){
   var self = this;
-  var stormpath = stormpathLib || require('stormpath');
-  var apiKeyId = opts.apiKeyId || process.env['STORMPATH_API_KEY_ID'] || "";
-  var apiKeySecret = opts.apiKeySecret || process.env['STORMPATH_API_KEY_SECRET'] || "";
+  var opts = typeof _options === 'object' ? _options : {};
 
-  var errorHandler = opts.errorHandler;
-
-  if(opts.spClient){
-    self.spClient = opts.spClient;
-  }else{
-    self.spClient = new stormpath.Client({
-      apiKey: new stormpath.ApiKey(apiKeyId,apiKeySecret),
-      userAgent: 'restify-stormpath/' + pkg.version + ' ' + 'restify/' + require('restify/package').version,
-    });
-  }
-  var getCurrentTenant = new Promise(function(resolve,reject){
-    self.spClient.getCurrentTenant(
-      function(err,tenant){
-        if(err){
-          reject(err);
-        }else{
-          resolve(tenant);
-        }
-      }
-    );
-  });
-  getCurrentTenant.catch(function(err){
-    throw err;
-  });
-
-  function handleError(err,req,res,next){
-    if(typeof errorHandler==='function'){
-      errorHandler(err,req,res,next);
-    }else{
-      next(err);
-    }
-  }
 
   return function _handleAccountVerificationRequest(req,res,next){
-
-    getCurrentTenant.then(function(tenant){
+    self.getCurrentTenant.then(function(tenant){
       tenant.verifyAccountEmail(req.params.sptoken,function(err,account){
         if(err){
-          handleError(err,req,res,next);
+          self.handleError(opts.errorHandler,err,req,res,next);
         }else{
           account.createApiKey(function(err,apiKey){
             if(err){
-              handleError(err,req,res,next);
+              self.handleError(opts.errorHandler,err,req,res,next);
             }else{
               var body = 'Api Key Id: ' + apiKey.id + '\n' + 'Api Key Secret: ' + apiKey.secret;
               res.writeHead(200, {
@@ -182,23 +83,18 @@ function accountVerificationFilter(_options,stormpathLib){
               res.write(body);
             }
           });
-
         }
       });
     });
-
   };
 }
 
-function createGroupFilter(_targetGroups,errorHandler){
-  var targetGroups;
+function createGroupFilter(_options){
+  var self = this;
+  var opts = typeof _options === 'object' ? _options : {};
 
-  if(Array.isArray(_targetGroups)){
-    targetGroups = _targetGroups;
-  }else if(typeof _targetGroups==='string'){
-    targetGroups = [_targetGroups];
-  }else{
-    throw new Error('createGroupFilter: targetGroups must be a string or array of strings');
+  if(!opts.inGroup){
+    throw new Error('inGroup is the only supported filter at this time.  PR welcome!');
   }
 
   return function groupFilter(req,res,next){
@@ -207,13 +103,13 @@ function createGroupFilter(_targetGroups,errorHandler){
         next(err);
       }else{
         collection.detect(function(group,cb){
-          cb(targetGroups.indexOf(group.name) > -1);
+          cb(opts.inGroup === group.name);
         },function(result){
           if(result){
             next();
           }else{
             if(typeof errorHandler==='function'){
-              errorHandler(req,res,next,err);
+              self.handleError(opts.errorHandler,err,req,res,next);
             }else{
               res.send(403);
             }
@@ -224,9 +120,62 @@ function createGroupFilter(_targetGroups,errorHandler){
   };
 }
 
+function createFilterSet(_options){
+  var opts = typeof _options === 'object' ? _options : {};
+  var self = this;
+  var stormpath = opts.stormpathLib || require('stormpath');
+  var apiKeyId = opts.apiKeyId || process.env['STORMPATH_API_KEY_ID'] || "";
+  var apiKeySecret = opts.apiKeySecret || process.env['STORMPATH_API_KEY_SECRET'] || "";
+  var appHref = opts.appHref || process.env['STORMPATH_APP_HREF'] || "";
+
+  if(opts.spClient){
+    self.spClient = opts.spClient;
+  }else{
+    self.spClient = new stormpath.Client({
+      apiKey: new stormpath.ApiKey(apiKeyId,apiKeySecret),
+      userAgent: 'restify-stormpath/' + pkg.version + ' ' + 'restify/' + require('restify/package').version,
+    });
+  }
+  console.log('Initializing Stormpath');
+  self.getApplication = new Promise(function(resolve,reject){
+    self.spClient.getApplication(appHref,
+      function(err,app){
+        if(err){
+          reject(err);
+        }else{
+          resolve(app);
+        }
+      }
+    );
+  });
+  self.getApplication.then(function(app){
+    console.log('Using Stormpath application \'' + app.name + '\'');
+  });
+  self.getApplication.catch(function(err){
+    throw err;
+  });
+  self.getCurrentTenant = new Promise(function(resolve,reject){
+    self.spClient.getCurrentTenant(
+      function(err,tenant){
+        if(err){
+          reject(err);
+        }else{
+          resolve(tenant);
+        }
+      }
+    );
+  });
+  self.getCurrentTenant.catch(function(err){
+    throw err;
+  });
+  self.createOauthFilter = createOauthFilter.bind(self);
+  self.createGroupFilter = createGroupFilter.bind(self);
+  self.newAccountFilter = newAccountFilter.bind(self);
+  self.accountVerificationFilter = accountVerificationFilter.bind(self);
+  self.handleError = handleError.bind(self);
+  return this;
+}
+
 module.exports = {
-  createOauthFilter: createOauthFilter,
-  createGroupFilter: createGroupFilter,
-  newAccountFilter: newAccountFilter,
-  accountVerificationFilter: accountVerificationFilter
+  createFilterSet: createFilterSet
 };
