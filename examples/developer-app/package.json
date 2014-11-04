@@ -1,0 +1,15 @@
+{
+  "name": "developer-app",
+  "version": "0.0.0",
+  "description": "Example usage of the Things API client library",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "prettyjson": "^1.0.0",
+    "restify": "^2.8.3"
+  }
+}
