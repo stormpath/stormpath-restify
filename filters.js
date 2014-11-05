@@ -11,7 +11,7 @@ function handleError(handler,err,req,res,next){
   else if(typeof handler==='function'){
     handler(err,req,res,next);
   }else{
-    next(err);
+    res.json(err.status || 500,err);
   }
 }
 
