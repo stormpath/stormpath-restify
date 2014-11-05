@@ -127,7 +127,9 @@ function createFilterSet(_options){
   var apiKeyId = opts.apiKeyId || process.env['STORMPATH_API_KEY_ID'] || "";
   var apiKeySecret = opts.apiKeySecret || process.env['STORMPATH_API_KEY_SECRET'] || "";
   var appHref = opts.appHref || process.env['STORMPATH_APP_HREF'] || "";
-
+  if(typeof opts.errorHandler==='function'){
+    self.errorHandler = opts.errorHandler;
+  }
   if(opts.spClient){
     self.spClient = opts.spClient;
   }else{
