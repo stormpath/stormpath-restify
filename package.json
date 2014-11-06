@@ -1,13 +1,16 @@
 {
   "name": "stormpath-restify",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "index.js",
-  "description": "Official Stormpath Integration for Restify",
+  "description": "Implement OAuth2 Client Credentials Flow for server and client - using Stormpath",
   "keywords": [
     "stormpath",
     "restify",
     "oauth",
-    "oauth2"
+    "oauth2",
+    "api",
+    "authentication",
+    "client"
   ],
   "license": "Apache-2.0",
   "homepage": "https://github.com/stormpath/stormpath-restify",
