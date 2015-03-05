@@ -97,13 +97,15 @@ function createGroupFilter(_options){
     throw new Error('inGroup is the only supported filter at this time.  PR welcome!');
   }
 
+  opts.inGroup = typeof opts.inGroup === 'string' ? [opts.inGroup] : opts.inGroup;
+
   return function groupFilter(req,res,next){
     req.account.getGroups(function(err,collection){
       if(err){
         next(err);
       }else{
         collection.detect(function(group,cb){
-          cb(opts.inGroup === group.name);
+          cb(opts.inGroup.indexOf(group.name) >= 0);
         },function(result){
           if(result){
             next();
