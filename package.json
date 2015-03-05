@@ -1,6 +1,6 @@
 {
   "name": "stormpath-restify",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "index.js",
   "description": "Implement OAuth2 Client Credentials Flow for server and client - using Stormpath",
   "keywords": [
