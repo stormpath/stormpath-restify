@@ -28,7 +28,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "bluebird": "^2.3.10",
+    "bluebird": "^3.0.4",
     "assert-plus": "^0.1.5",
     "restify": "^2.8.3",
     "stormpath": "^0.9.3",
