@@ -140,7 +140,9 @@ function createFilterSet(_options){
       userAgent: 'restify-stormpath/' + pkg.version + ' ' + 'restify/' + require('restify/package').version,
     });
   }
-  console.log('Initializing Stormpath');
+  if(!opts.quiet){
+    console.log('Initializing Stormpath');
+  }
   self.getApplication = new Promise(function(resolve,reject){
     self.spClient.getApplication(appHref,
       function(err,app){
@@ -153,7 +155,9 @@ function createFilterSet(_options){
     );
   });
   self.getApplication.then(function(app){
-    console.log('Using Stormpath application \'' + app.name + '\'');
+    if(!opts.quiet){
+      console.log('Using Stormpath application \'' + app.name + '\'');
+    }
   });
   self.getApplication.catch(function(err){
     throw err;
