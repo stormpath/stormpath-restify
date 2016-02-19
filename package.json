@@ -31,7 +31,7 @@
     "bluebird": "^2.3.10",
     "assert-plus": "^0.1.5",
     "restify": "^2.8.3",
-    "stormpath": "^0.9.3",
+    "stormpath": "^0.17.2",
     "uuid": "^2.0.1",
     "underscore": "^1.7.0",
     "prettyjson": "^1.0.0",
