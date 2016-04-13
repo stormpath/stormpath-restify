@@ -32,7 +32,7 @@
     "assert-plus": "^0.1.5",
     "restify": "^2.8.3",
     "stormpath": "^0.9.3",
-    "uuid": "^2.0.1",
+    "uuid": "^2.0.2",
     "underscore": "^1.7.0",
     "prettyjson": "^1.0.0",
     "prompt": "^0.2.14"
