@@ -30,7 +30,7 @@
   "dependencies": {
     "bluebird": "^2.3.10",
     "assert-plus": "^0.1.5",
-    "restify": "^2.8.3",
+    "restify": "^4.1.1",
     "stormpath": "^0.9.3",
     "uuid": "^2.0.1",
     "underscore": "^1.7.0",
