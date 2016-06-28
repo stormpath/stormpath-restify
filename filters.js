@@ -126,31 +126,30 @@ function createFilterSet(_options){
   var opts = typeof _options === 'object' ? _options : {};
   var self = this;
   var stormpath = opts.stormpathLib || require('stormpath');
-  var apiKeyId = opts.apiKeyId || process.env['STORMPATH_API_KEY_ID'] || "";
-  var apiKeySecret = opts.apiKeySecret || process.env['STORMPATH_API_KEY_SECRET'] || "";
-  var appHref = opts.appHref || process.env['STORMPATH_APP_HREF'] || "";
+
+  opts.userAgent = 'restify-stormpath/' + pkg.version + ' ' + 'restify/' + require('restify/package').version;
+
   if(typeof opts.errorHandler==='function'){
     self.errorHandler = opts.errorHandler;
   }
   if(opts.spClient){
     self.spClient = opts.spClient;
   }else{
-    self.spClient = new stormpath.Client({
-      apiKey: new stormpath.ApiKey(apiKeyId,apiKeySecret),
-      userAgent: 'restify-stormpath/' + pkg.version + ' ' + 'restify/' + require('restify/package').version,
-    });
+    self.spClient = new stormpath.Client(opts);
   }
   console.log('Initializing Stormpath');
   self.getApplication = new Promise(function(resolve,reject){
-    self.spClient.getApplication(appHref,
-      function(err,app){
-        if(err){
-          reject(err);
-        }else{
-          resolve(app);
+    self.spClient.on('ready', function(){
+      self.spClient.getApplication(self.spClient.config.application.href,
+        function(err,app){
+          if(err){
+            reject(err);
+          }else{
+            resolve(app);
+          }
         }
-      }
-    );
+      );
+    });
   });
   self.getApplication.then(function(app){
     console.log('Using Stormpath application \'' + app.name + '\'');
@@ -159,15 +158,17 @@ function createFilterSet(_options){
     throw err;
   });
   self.getCurrentTenant = new Promise(function(resolve,reject){
-    self.spClient.getCurrentTenant(
-      function(err,tenant){
-        if(err){
-          reject(err);
-        }else{
-          resolve(tenant);
+    self.spClient.on('ready', function(){
+      self.spClient.getCurrentTenant(
+        function(err,tenant){
+          if(err){
+            reject(err);
+          }else{
+            resolve(tenant);
+          }
         }
-      }
-    );
+      );
+    });
   });
   self.getCurrentTenant.catch(function(err){
     throw err;
