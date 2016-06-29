@@ -59,7 +59,8 @@ you can generate a filter set for that application:
   var stormpathConfig = {
     apiKeyId: 'YOUR_STORMPATH_API_KEY',
     apiKeySecret: 'YOUR_STORMPATH_API_SECRET',
-    appHref: 'YOUR_STORMPATH_APP_HREF'
+    appHref: 'YOUR_STORMPATH_APP_HREF',
+    quiet: false // Optional. Use "quiet: true" to suppress console logging
   };
 
   var stormpathFilters = stormpathRestify.createFilterSet(stormpathConfig);

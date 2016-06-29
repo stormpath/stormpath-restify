@@ -137,7 +137,9 @@ function createFilterSet(_options){
   }else{
     self.spClient = new stormpath.Client(opts);
   }
-  console.log('Initializing Stormpath');
+  if(!opts.quiet){
+    console.log('Initializing Stormpath');
+  }
   self.getApplication = new Promise(function(resolve,reject){
     self.spClient.on('ready', function(){
       self.spClient.getApplication(self.spClient.config.application.href,
@@ -152,7 +154,9 @@ function createFilterSet(_options){
     });
   });
   self.getApplication.then(function(app){
-    console.log('Using Stormpath application \'' + app.name + '\'');
+    if(!opts.quiet){
+      console.log('Using Stormpath application \'' + app.name + '\'');
+    }
   });
   self.getApplication.catch(function(err){
     throw err;
