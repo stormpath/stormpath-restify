@@ -27,13 +27,43 @@ of this repo.
 To get started, you need to install this package via npm:
 
 ```bash
-  $ npm install stormpath-restify
+npm install stormpath-restify
 ```
 
 You can then require it in your Restify server application:
 
+
+You will need a free Developer account, available at
+[api.stormpath.com/register](https://api.stormpath.com/register).
+Once you have logged in, click on the "Node.js" quickstart on the home screen
+of the Admin Console.  You will see your API Keys and Stormpath Application href,
+you will need to provide those to your Restify project.
+
+You can export them to your environment:
+
+```bash
+export STORMPATH_API_KEY_SECRET=XXX
+export STORMPATH_API_KEY_ID=XXX
+export STORMPATH_APP_HREF=XXX
+```
+
+Or you can create `stormpath.yaml` in the root of your project, and define them
+like this:
+
+```yaml
+client:
+  apiKey:
+    id: YOUR_STORMPATH_API_KEY
+    secret: YOUR_STORMPATH_API_SECRET
+application:
+  href: https://api.stormpath.com/v1/applications/YOUR_STORMPATH_APP_HREF
+```
+
+Now that you have configured your settings, you can require the module in your
+project.  This will usually go in your main server file:
+
 ```javascript
-  var stormpathRestify = require('stormpath-restify')
+var stormpathRestify = require('stormpath-restify')
 ```
 
 ## HTTPS - You MUST use it
@@ -50,29 +80,26 @@ To make use of the filters you must first create a filter set which is
 bound to your Stormpath Application (this is how we use Stormpath to manage
 all the state about your API accounts).
 
-You will need a free Developer account, available at
-[api.stormpath.com/register](https://api.stormpath.com/register).
-Once you have obtained your Stormpath credentials and Application Href
-you can generate a filter set for that application:
+
+Now you can generate a filter set for that application:
 
 ```javascript
-  var stormpathConfig = {
-    apiKeyId: 'YOUR_STORMPATH_API_KEY',
-    apiKeySecret: 'YOUR_STORMPATH_API_SECRET',
-    appHref: 'YOUR_STORMPATH_APP_HREF'
-  };
-
-  var stormpathFilters = stormpathRestify.createFilterSet(stormpathConfig);
+var stormpathFilters = stormpathRestify.createFilterSet();
 ```
 
-Alternatively you can export those values as these environment variables,
-and they will be automatically read (you do not have to pass in a config
-object to createFilterSet):
+This will create an internal [Stormpath Client][]
+that is bound to the Stormpath application that you configured.  Any options that
+the [Stormpath Client][] accepts can be passed into the this function.  For
+example, if you wanted to configure redis:
 
-```bash
-export STORMPATH_API_KEY_SECRET=XXX
-export STORMPATH_API_KEY_ID=XXX
-export STORMPATH_APP_HREF=XXX
+```javascript
+var clientOptions = {
+  cacheOptions: {
+    store: 'redis'
+  }
+}
+
+var stormpathFilters = stormpathRestify.createFilterSet(clientOptions);
 ```
 
 ## Using the Filters
@@ -192,3 +219,5 @@ var stormpathFilters = stormpathRestify.createFilterSet({
   }
 });
 ```
+
+[Stormpath Client]: http://docs.stormpath.com/nodejs/api/client
