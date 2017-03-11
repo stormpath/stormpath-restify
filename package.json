@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "assert-plus": "^1.0.0",
-    "bluebird": "^3.4.1",
+    "bluebird": "^3.4.3",
     "prettyjson": "^1.1.3",
     "prompt": "^1.0.0",
     "restify": "^4.1.1",
